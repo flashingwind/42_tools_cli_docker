@@ -1,17 +1,32 @@
-# norminettとc-formatter-42を1つのDockerイメージにまとめる
+# norminettとc-formatter-42を1つのDockerイメージにまとめてみた
+
+## 開発中!! (Under development)
 
 42tokyoという特殊な環境では、ある特定のスタイルのコードを書くことが求められる。
 特に、インストールがやっかいなのが、macOS標準のPythonで動かないツール、norminettとc-formatter-42である。norminett公式を含めnorminettのDockerイメージやDockerfileがあるが、c-formatter-42はないようだ。別々にDockerイメージを作るとそこそこ容量を食うことであるし、まとめてしまうことにした。
 
+ただ、私はいまPiscine受験生で、絶賛底辺を這いずり回っていて、落ちる可能性大だ。落ちたら更新しないだろう。42tokyoのメアドからメールをいただければ、レポジトリーはいつでも譲ります。
+
+## 必要なもの
+
+- Docker
+- git
+- (pip経由でインストールしたnorminettとc-formatter-42があるとトラブルになるかもしれない)
+
 ## Usage
 
-次の通りダウンロード(clone)して、docker buildし、ソースコード`*.c`のあるディレクトリーに移動して実行せよ。VSCodeについては後述する。
+次の通りダウンロード(clone)して、docker buildし、ソースコード`*.c`のあるディレクトリーに移動して通常通り実行せよ。
+ダウンロードする場所はどこでもいいが、使ってる間は消せないので、じゃまにならないところにしてください。
+
+VSCodeについては後述する。
 
 ```
 git clone https://github.com/flashingwind/dockerfile_norminette_and_c-formatter-42.git
 ```
 
-だだし、最新版に維持する機能はないので、そうしたいときはイメージをビルドし直すこと。必要ならDockerfileの中身を自分で編修すること(Pythonのバージョンとか)。
+最新版に維持する機能はないので、必要ならDockerでイメージを消してビルドし直すこと。必要ならDockerfileの中身を自分で編修すること(Pythonのバージョンとか)。
+
+だだし、最新版に更新する機能はないので、そうしたいときはイメージをビルドし直すこと。pipから再インストールされる。将来Pythonのバージョン由来のエラーとか、どうしようもないエラーが起きたr、Dockerfileの中身を自分で編集してほしい。
 
 ### macOS / Windows PowerShell
 
@@ -24,12 +39,7 @@ docker run -v $PWD:/code alexandregv/norminette:v3
 # 引数を渡してnorminette実行
 docker run -v $PWD:/code alexandregv/norminette:v3 -R CheckForbiddenSourceHeader main.c
 ```
-
 LinuxとWindows PowerShellでも同様に動くかもしれない。
-
-### Windows(MS-DOS的なやつ)
-
-MS-DOS的なやつでは、`$PWD`が使えないので`%cd%`.と置き換えると動くらしい。がんばって。
 
 ## エディターの設定
 
