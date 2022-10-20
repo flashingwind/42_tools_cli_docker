@@ -3,7 +3,7 @@
 ## 開発中!! (Under development)
 
 42tokyoという特殊な環境では、ある特定のスタイルのコードを書くことが求められる。
-特に、インストールがやっかいなのが、macOS標準のPythonで動かないツール、norminettとc-formatter-42である。norminett公式を含めnorminettのDockerイメージやDockerfileがあるが、c-formatter-42はないようだ。~~~別々にDockerイメージを作るとそこそこ容量を食うことであるし、まとめてしまうことにした。~~
+特に、インストールがやっかいなのが、macOS標準のPythonで動かないツール、norminettとc-formatter-42である。norminett公式を含めnorminettのDockerイメージやDockerfileがあるが、c-formatter-42はないようだ。~~別々にDockerイメージを作るとそこそこ容量を食うことであるし、まとめてしまうことにした。~~
 無いにはないなりの理由があるようで、c-formatter-42はなんかうまくいかない。
 
 ただ、私はいまPiscine受験生で、絶賛底辺を這いずり回っていて、落ちる可能性大だ。落ちたら更新しないだろう。42tokyoのメアドからメールをいただければ、レポジトリーはいつでも譲ります。
