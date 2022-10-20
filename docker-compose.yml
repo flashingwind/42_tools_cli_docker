@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  cppdev-alpine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 42_c_tools-alpine
+    container_name: 42_c_tools-alpine
+    volumes:
+      - type: bind
+        source: .
+        target: /code
+    stdin_open: true
+    tty: true
+    working_dir: /code
