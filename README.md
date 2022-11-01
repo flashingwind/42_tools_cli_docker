@@ -1,12 +1,12 @@
 # norminettとc-formatter-42を1つのDockerイメージにまとめてみた
 
-## 開発中!! (Under development)
-
 42tokyoという特殊な環境では、ある特定のスタイルのコードを書くことが求められる。
-特に、インストールがやっかいなのが、macOS標準のPythonで動かないツール、norminettとc-formatter-42である。norminett公式を含めnorminettのDockerイメージやDockerfileがあるが、c-formatter-42はないようだ。~~別々にDockerイメージを作るとそこそこ容量を食うことであるし、まとめてしまうことにした。~~
-無いにはないなりの理由があるようで、c-formatter-42はなんかうまくいかない。
 
-ただ、私はいまPiscine受験生で、絶賛底辺を這いずり回っていて、落ちる可能性大だ。落ちたら更新しないだろう。42tokyoのメアドからメールをいただければ、レポジトリーはいつでも譲ります。
+特に、インストールがやっかいなのが、macOS標準のPythonで動かないツール、norminettとc-formatter-42である。norminett公式を含めnorminettのDockerイメージやDockerfileがあるが、c-formatter-42はないようだ。別々にDockerイメージを作るとそこそこ容量を食うことであるし、ついでに`clang`もまとめてしまうことにした。
+
+一応作ってみたけど、無いには無いなりの理由があるようで、c_formatter_42はVSCodeの連携ができないため、使い物にならない。42 C-Formatという拡張は実行コマンドが固定されているためだ。DokcerイメージにVSCodeサーバーというものを入れればいいらしいけど、時間が無くて……。
+
+マジで管理できないので、説明が分からないときはコード読んでください。42tokyoのメアドからメールをいただければ、レポジトリーはいつでも譲ります。
 
 ## 必要なもの(Requirements)
 
@@ -15,32 +15,45 @@
 
 ## Setup
 
-次の通りダウンロード(clone)して、docker buildし、ソースコード`*.c`のあるディレクトリーに移動して通常通り実行せよ。
-ダウンロードする場所はどこでもいいが、できたフォルダは使ってる間は消せないので、じゃまにならないところにしてください。
+次の通りダウンロード(git clone)して、`./c_42_build.sh`でビルドし、このディレクトリーにPATHを通す。
+ダウンロードする場所はどこでもいいが、できたフォルダは使ってる間は消せないので、じゃまにならないところにしてください。目障りであれば、`~/.docker_42_tools`とか隠してもかまわないが、以下の説明はフォルダ名を正しく読み替えてください。
 
 VSCodeについては後述する。
 
 ```
-git clone https://github.com/flashingwind/dockerfile_norminette_and_c-formatter-42.git
-cd dockerfile_norminette_and_c-formatter-42
+git clone https://github.com/flashingwind/dockerfile_norminette_and_c-formatter-42.git docker_42_tools
+cd docker_42_tools
 ./c_42_build.sh
 ```
 
-これでイメージができる。この長ったらしいフォルダー名を変えたり、場所を移すときは今のうちにやっておいてほしい。目障りであれば、`~/.42c_tools`とか隠してもかまわないが、以下の説明は変更したフォルダ名に読み替えてください。
+これでDockerイメージができる。あとは好みでパスを通す。aliasの方がよければそれでも。
 
-このフォルダにいくつかスクリプトがあるので、パスを通しておく方がいいと思う。
+```
+echo 'export PATH="~/.bin:$PATH"'>>~/.zshrc
+source ~/.zshrc
+```
+
+一般的なzsh環境だと、これで使えると思われる。
 
 ```
 export PATH=$PWD:PATH >> ~/.zshrc
 ```
 
-最新版に維持する機能はないので、必要ならDockerでイメージを消してビルド`./c_42_build.sh`し直すこと。必要ならDockerfileの中身を自分で編修すること(Pythonのバージョンとか)。
+最新版に維持する機能はないので、必要ならDockerイメージを消してビルド`./c_42_build.sh`し直すこと。
 
-だだし、最新版に更新する機能はないので、そうしたいときはイメージをビルドし直すこと。pipから再インストールされる。将来Pythonのバージョン由来のエラーとか、どうしようもないエラーが起きたr、Dockerfileの中身を自分で編集してほしい。
+pipから再インストールされる。将来Pythonのバージョン由来のエラーとか、どうしようもないエラー(Pythonのバージョンが古いとか)が起きたら、必要ならDockerfileの中身を自分で編修することDockerfileの中身を自分で編集してほしい。
 
-### Usage (macOS/Linuxなど)
+### Usage (macOS/Linux)
 
-基本的には下記の通りですが、Dockerの起動と`./c_42_build.sh`
+基本的には下記の通りですが、エラー時はDockerの起動と`./c_42_build.sh`を事前に実行して、イメージができているか確認してください。
+
+Linuxでも同様に動くかもしれないです。Windows PowerShellはおそらく付属のスクリプト群の変数を変える必要があります。
+
+#### Docker特有の注意点
+
+Dockerの外でのカレントディレクトリー`.`をDockerコンテナ内のカレントディレクトリー`/code`に関連づけてあり、絶対パスは`/code/〜`となります。
+
+相対パスなら同じになるので、相対パスでの指定をおすすめします。
 
 #### norminette
 
@@ -48,11 +61,11 @@ export PATH=$PWD:PATH >> ~/.zshrc
 
 ただし、dockerの都合上、引数はカレントディレクトリーからの相対パスとしてください。ディレクトリーであれば中の.cッファイルすべてを検査、ファイル名であれば、そのファイルを検査します。
 
-フルパス(`/Users/xxxxx/……`)や`~`からはじまるパスをしていすると動きません。
+フルパス(`/Users/xxxxx/……`)や`~`からはじまるパスを指定すると動きません。
 
-大きなお世話ですが、43 Tokyo向けなので、はじめから`-R CheckForbiddenSourceHeader`がついています。オプションの変更は`norminette`ファイルを編集してください。
+大きなお世話ですが、43 Tokyo向けなので、はじめから`-R CheckForbiddenSourceHeader`がついています。オプションの恒久的変更は`norminette`ファイルを編集してください。
 
-```
+```bash
 # あるフォルダ以下全部の.cファイルにnorminette実行:
 cd ~/42/ex00
 ~/42/c00/ > ../docker_42_tools/norminette .
@@ -71,59 +84,56 @@ cd ~/42/ex00
 ex00/ft_putchar.c: OK!
 ```
 
-Linuxでも同様に動くかもしれない。Windows PowerShellはスクリプトの変数を変える必要が有馬層です。しかし今、VirtualBoxを立ち上げて試す気力と時間がありません。情報はお待ちしています。
+一時的にオプションを変えたいときは、`42bash`スクリプトで、直接bashにコマンドを渡します。
 
-#### ~~c_formatter_42(現在使えません)~~
-
-`_c_formatter_42`スクリプトを作ってあるけど、
-
-```
-FileNotFoundError: [Errno 2] No such file or directory: '/usr/local/lib/python3.10/site-packages/c_formatter_42/data/clang-format-linux'
+```bash
+~/42/c00/ex01/ > 42bash "norminette ."
 ```
 
-ってなって使えません。この`clang-format-linux`自体も実行ファイルなので、実行してみましたが、やはり同様のエラーが。lsで見る分には正常なのですが、直接実行するとダメ。catでは開ける。
+#### c_formatter_42
 
-```
-> docker run 42_c_tools-alpine:latest c_formatter_42
-……
-FileNotFoundError: [Errno 2] No such file or directory: '/usr/local/lib/python3.10/site-packages/c_formatter_42/data/clang-format-linux'
+`c_formatter_42`スクリプトを作ってある。
 
-> docker run 42_c_tools-alpine:latest ls /usr/local/lib/python3.10/site-packages/c_formatter_42/data/
-__init__.py
-__pycache__
-clang-format
-clang-format-darwin
-clang-format-linux
-clang-format-win32.exe
-```
+`.c``.h`ファイルを指定すと、ファイル自体を上書きします。
+
+VSCodeから使えません。
 
 #### clang
 
-ややくせがある。つぎのようにコンパイルのみだと、macでは実行できないファイルが生成されるため、
+やや癖がある。次のようにコンパイルのみだと、macOSでは実行できないファイルが生成される。
 
 ```
-~/42/c00/ex01/ > ~/42/docker_42_tools/cc ft_print_alphabet.c
+~/42/c00/ex01/ > cc ft_print_alphabet.c
 ```
 
 Docker側で実行までしなければならない。
 
 ```
-~/42/c00/ex01/ > ~/42/docker_42_tools/cc "ft_print_alphabet.c && ./a.out"
+~/42/c00/ex01/ > cc "ft_print_alphabet.c && ./a.out"
 ```
+
+また、実行のみ行うときは、
+
+```
+~/42/c00/ex01/ > 42bash "./a.out"
+```
+
+とする。
 
 #### いざというとき
 
 ```
-~/42/c00/ex01/ > ~/42/docker_42_tools/42 "./a.out"
+~/42/c00/ex01/ > 42bash_it
 ```
 
-任意のコマンドを実行できる。また、`docker run`で直接起動して、内部のシェルを起動すればなんでもできる。
+内部のシェルを起動、任意のコマンドを実行できる。[Ctrl]+[D]で抜ける。カレントディレクトリーは保存が反映されるが、イメージ自体は変更されないので、イメージの変更が必要であれば`Dockerfile`の`RUN`のあたりを編集し、再ビルドする必要がある。
 
 ## vscode連携
 
-エディターはVisual Studio Codeしか使ってないので、それの設定だけ書く。次の2つの拡張機能をVSCodeにインストールする。
+エディターはVisual Studio Codeしか使ってないので、それの設定だけ書く。次の拡張機能をVSCodeにインストールする。ただし、`pip……`コマンドは行わない。パスが通っている場合は、説明書き通りの設定でよさそうだ。
 
 - [evilcat.norminette-42](https://marketplace.visualstudio.com/items?itemName=evilcat.norminette-42)
+<!--
 - ~~[keyhr.42-c-format](https://pypi.org/project/c-formatter-42/#:~:text=Install-,keyhr.42%2Dc%2Dformat,-extension.)
 
 (関係ないけど、僕は「C/C++ Extension Pack」と「42 Header」も入れています。)
@@ -154,24 +164,13 @@ list[]={1,2,3};
 
 これにより、マシンのどこにあるCファイルでも42形式にしちゃうようになります。まあいいんじゃないでしょうか。フォルダー限定(42の作業フォルダなど)の設定もできるけど、詳しくないんです。C言語で仕事してる人は自分で調べて。
 
-これらは外部にあるnorminetteや~~42-c-format~~を利用している。そこで、このツールを使うためには設定が必要だ。
+これらは外部にあるnorminetteや42-c-formatを利用している。そこで、このツールを使うためには設定が必要だ。
 
+-->
 
-```
-./c_42_build.sh
-```
-
-これでDockerイメージができる。あとは好みでパスを通す。aliasの方がよければそれでも。
-
-```
-echo 'export PATH="~/.bin:$PATH"'>>~/.zshrc
-source ~/.zshrc
-```
-
-一般的なzsh環境だと、これで使えると思われる。evilcat.norminette-42拡張機能は、実行するコマンド(c-format-42やpython)のパスを指定できないので、こういう変則的なことをしている。
-
-## 謝辞
+## 謝辞(Thanks)
 
 本レポジトリーは次のレポジトリーをフォークしてほんのちょっと改変したものである。
 
 - [GitHub: alexandregv/norminette-docker)](https://github.com/alexandregv/norminette-docker)
+
