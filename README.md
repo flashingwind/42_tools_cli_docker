@@ -21,7 +21,7 @@
 VSCodeについては後述する。
 
 ```
-git clone https://github.com/flashingwind/dockerfile_norminette_and_c-formatter-42.git docker_42_tools
+git clone https://github.com/flashingwind/docker_42_tools.git docker_42_tools
 cd docker_42_tools
 ./c_42_build.sh
 ```
