@@ -1,12 +1,18 @@
-# norminettとc-formatter-42を1つのDockerイメージにまとめてみた
+# norminettとc-formatter-42とclangを1つのDockerイメージにまとめてみた
 
-42tokyoという特殊な環境では、ある特定のスタイルのコードを書くことが求められる。
+**このレポジトリーはアーカイブ状態にします。**
 
-特に、インストールがやっかいなのが、macOS標準のPythonで動かないツール、norminettとc-formatter-42である。norminett公式を含めnorminettのDockerイメージやDockerfileがあるが、c-formatter-42はないようだ。別々にDockerイメージを作るとそこそこ容量を食うことであるし、ついでに`clang`もまとめてしまうことにした。
+一応、[こっちは生かしておくつもり](https://github.com/flashingwind/42_c_vscode_container/edit/master/README.md)。
 
-一応作ってみたけど、無いには無いなりの理由があるようで、c_formatter_42はVSCodeの連携ができないため、使い物にならない。42 C-Formatという拡張は実行コマンドが固定されているためだ。ホスト側にVSCodeのDev Containers拡張というものを入れればいいのかもしれないけど、時間が無くて……。
+## 背景
 
-マジで管理できないので、説明が分からないときはDockerfile読んでください。
+42tokyoという特殊な環境では、
+
+- norminettと
+- c-formatter-42がいる。ついでに
+- clangも。
+
+一応作ってみたけど、無いには無いなりの理由があるようで、c_formatter_42はVSCodeの連携ができないため、vscode使い物にならないのでレポジトリーをアーカイブ状態にする。マジで管理できないし。42落ちたし。
 
 ## 必要なもの(Requirements)
 
