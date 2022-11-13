@@ -2,7 +2,7 @@
 
 **このレポジトリーはアーカイブ状態にします。**
 
-一応、[こっちは生かしておくつもり](https://github.com/flashingwind/42_c_vscode_container/edit/master/README.md)。
+一応、[こっちは(VSCode devcontainer版)は生かしておくつもり](https://github.com/flashingwind/42_c_vscode_container/edit/master/README.md)。
 
 ## 背景
 
